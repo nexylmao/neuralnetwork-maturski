@@ -17,13 +17,6 @@ namespace NeuralNetworkTester
         {
             this.name = name;
         }
-
-        public override void Emit(double value)
-        {
-            Console.Write("Axon \"" + name + "\" > ");
-            Console.WriteLine("Emitting " + value + " to " + targets.Count + " dendrite(s).");
-            base.Emit(value);
-        }
     }
 
     public class ConsoleDendrite : Dendrite
@@ -38,10 +31,10 @@ namespace NeuralNetworkTester
             ReceiveValue += ValueHandler;
         }
 
-        public void ValueHandler(object sender, double value)
+        public void ValueHandler(object sender, double[] values)
         {
             Console.Write("Dendrite \"" + name + "\" > ");
-            Console.WriteLine("Received " + value + ".");
+            Console.WriteLine("Received " + values.Length + " values.");
         }
     }
 
@@ -51,12 +44,11 @@ namespace NeuralNetworkTester
         {
             ConsoleAxon axon = new ConsoleAxon("Main Console Axon");
             ConsoleDendrite dendrite = new ConsoleDendrite("Main Console Dendrite");
-            Neuron neuron = new Neuron(1.2);
 
-            axon.AddDendrite(neuron.Dendrite);
-            neuron.Axon.AddDendrite(dendrite);
+            axon.Value = 1;
+            axon.AddDendrite(dendrite);
 
-            axon.Emit(1);
+            dendrite.Pull();
 
             Console.ReadKey(true);
         }

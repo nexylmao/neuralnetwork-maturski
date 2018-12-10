@@ -21,10 +21,10 @@ namespace NeuralNetworkLibrary
             dendrite.ReceiveValue += HandleShock;
         }
 
-        public void HandleShock(object send, double value)
+        public void HandleShock(object send, double[] value)
         {
-            value *= Dendrite.Weight;
-            axon.Emit(value);
+            axon.Value = value.Sum();
+            
         }
     }
 }

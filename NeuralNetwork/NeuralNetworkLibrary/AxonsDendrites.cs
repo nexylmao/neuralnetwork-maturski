@@ -10,6 +10,8 @@ namespace NeuralNetworkLibrary
     {
         protected List<Dendrite> targets;
 
+        protected double value;
+
         public Axon()
         {
             targets = new List<Dendrite>();
@@ -20,48 +22,47 @@ namespace NeuralNetworkLibrary
             foreach(Dendrite target in targets)
             {
                 this.targets.Add(target);
-                target.TargetedBy = this;
+                target.TargetedBy.Add(this);
             }
         }
+
+        public double Value { get => value; set => this.value = value; }
 
         public void AddDendrite(Dendrite dendrite)
         {
             targets.Add(dendrite);
-            dendrite.TargetedBy = this;
-        }
-
-        public virtual void Emit(double value)
-        {
-            foreach(Dendrite target in targets)
-            {
-                target.ReceiveValue(this, value);
-            }
+            dendrite.TargetedBy.Add(this);
         }
     }
 
     public class Dendrite
     {
-        protected Axon targetedBy;
+        protected List<Axon> targetedBy;
 
         protected double weight;
 
-        public EventHandler<double> ReceiveValue;
+        public EventHandler<double[]> ReceiveValue;
 
         public double Weight { get => weight; }
 
-        public Axon TargetedBy { get => targetedBy; set => targetedBy = value; }
+        public List<Axon> TargetedBy { get => targetedBy; set => targetedBy = value; }
 
         public Dendrite() { }
 
         public Dendrite(double weight)
         {
             this.weight = weight;
+            this.targetedBy = new List<Axon>();
         }
 
-        public Dendrite(double weight, Axon targetedBy)
+        public void Pull()
         {
-            this.targetedBy = targetedBy;
-            this.weight = weight;
+            List<double> values = new List<double>();
+            foreach(Axon axon in targetedBy)
+            {
+                values.Add(axon.Value);
+            }
+            ReceiveValue(this, values.ToArray());
         }
     }
 }
