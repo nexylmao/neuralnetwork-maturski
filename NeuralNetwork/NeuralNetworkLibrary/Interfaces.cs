@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace NeuralNetworkLibrary
 {
-    public interface NeuralEmitterLayer
+    public interface NeuralTransmitterLayer
     {
-        void Emit();
+        double[] Emit();
     }
 
-    public interface NeuralReceiverLayer
+    public interface NeuralReceiverlayer
     {
-        event EventHandler<double[]> Receive;
+        void Receive(double[] values);
     }
 }

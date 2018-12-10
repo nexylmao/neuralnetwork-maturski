@@ -7,48 +7,28 @@ using NeuralNetworkLibrary;
 
 namespace NeuralNetworkTester
 {
-    public class ConsoleAxon : Axon
-    {
-        protected string name;
-
-        public string Name { get => name; }
-
-        public ConsoleAxon(string name)
-        {
-            this.name = name;
-        }
-    }
-
-    public class ConsoleDendrite : Dendrite
-    {
-        protected string name;
-
-        public string Name { get => name; }
-
-        public ConsoleDendrite(string name) : base(1)
-        {
-            this.name = name;
-            ReceiveValue += ValueHandler;
-        }
-
-        public void ValueHandler(object sender, double[] values)
-        {
-            Console.Write("Dendrite \"" + name + "\" > ");
-            Console.WriteLine("Received " + values.Length + " values.");
-        }
-    }
-
     class Program
     {
         static void Main(string[] args)
         {
-            ConsoleAxon axon = new ConsoleAxon("Main Console Axon");
-            ConsoleDendrite dendrite = new ConsoleDendrite("Main Console Dendrite");
+            Axon a = new Axon(1);
+            Axon b = new Axon(2);
+            Axon c = new Axon(3);
+            Dendrite d = new Dendrite(1);
+            d.Handle = (values) =>
+            {
+                return values.Sum() * d.Weight;
+            };
 
-            axon.Value = 1;
-            axon.AddDendrite(dendrite);
-
-            dendrite.Pull();
+            // this is basically what layers need to do
+            // collect all emits, and send it to dendrite
+            InputLayer input = new InputLayer();
+            input.Axons.Add(a);
+            input.Axons.Add(b);
+            input.Axons.Add(c);
+            OutputLayer output = new OutputLayer();
+            output.Dendrites.Add(d);
+            output.Receive(input.Emit());
 
             Console.ReadKey(true);
         }

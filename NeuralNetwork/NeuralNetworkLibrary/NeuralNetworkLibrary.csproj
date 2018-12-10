@@ -41,9 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AxonsDendrites.cs" />
+    <Compile Include="Axon.cs" />
+    <Compile Include="Dendrite.cs" />
+    <Compile Include="InputLayer.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="Neuron.cs" />
+    <Compile Include="OutputLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
