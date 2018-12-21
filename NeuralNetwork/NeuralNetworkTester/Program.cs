@@ -11,25 +11,48 @@ namespace NeuralNetworkTester
     {
         static void Main(string[] args)
         {
-            Axon a = new Axon(1);
-            Axon b = new Axon(2);
-            Axon c = new Axon(3);
-            Dendrite d = new Dendrite(1);
-            d.Handle = (values) =>
+            Axon a1 = new Axon(21);
+            Axon a2 = new Axon(9);
+            Axon a3 = new Axon(1);
+
+            Dendrite d1 = new Dendrite(1);
+            d1.Handle = values =>
             {
-                return values.Sum() * d.Weight;
+                return values.Average() * d1.Weight;
+            };
+            Dendrite d2 = new Dendrite(2);
+            d2.Handle = values =>
+            {
+                return values.Average() * d2.Weight;
+            };
+            Dendrite d3 = new Dendrite(3);
+            d3.Handle = values =>
+            {
+                return values.Average() * d3.Weight;
             };
 
             // this is basically what layers need to do
             // collect all emits, and send it to dendrite
             InputLayer input = new InputLayer();
-            input.Axons.Add(a);
-            input.Axons.Add(b);
-            input.Axons.Add(c);
-            OutputLayer output = new OutputLayer();
-            output.Dendrites.Add(d);
-            output.Receive(input.Emit());
+            input.Axons.Add(a1);
+            input.Axons.Add(a2);
+            input.Axons.Add(a3);
 
+            OutputLayer output = new ConsoleOutputLayer();
+            output.Dendrites.Add(d1);
+            output.Dendrites.Add(d2);
+            output.Dendrites.Add(d3);
+
+            double[] emitted = input.Emit();
+            Console.Write("Axons emitted : {\n\t");
+            foreach(double x in emitted)
+            {
+                Console.Write(" {0} ", x);
+            }
+            Console.WriteLine("\n}");
+            output.Receive(emitted);
+
+            Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
         }
     }

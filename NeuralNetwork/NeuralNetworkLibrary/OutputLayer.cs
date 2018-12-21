@@ -10,7 +10,10 @@ namespace NeuralNetworkLibrary
     {
         protected List<Dendrite> dendrites;
 
+        protected double[] calculated;
+
         public List<Dendrite> Dendrites { get => dendrites; }
+        public double[] Calculated { get => calculated; }
 
         public OutputLayer()
         {
@@ -19,12 +22,11 @@ namespace NeuralNetworkLibrary
 
         public virtual void Receive(double[] values)
         {
-            double[] calculated = new double[dendrites.Count];
+            calculated = new double[dendrites.Count];
             for (int i = 0; i < dendrites.Count; i++)
             {
                 calculated[i] = dendrites[i].Handle(values);
             }
-            Console.WriteLine(calculated);
         }
     }
 }

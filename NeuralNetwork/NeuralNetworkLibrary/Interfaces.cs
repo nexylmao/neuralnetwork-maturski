@@ -15,4 +15,9 @@ namespace NeuralNetworkLibrary
     {
         void Receive(double[] values);
     }
+
+    public interface NeuralHiddenLayer
+    {
+        double[] Passthrough(double[] values);
+    }
 }

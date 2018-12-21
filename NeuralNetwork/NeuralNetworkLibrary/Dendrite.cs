@@ -12,11 +12,15 @@ namespace NeuralNetworkLibrary
 
         public double Weight { get => weight; set => weight = value; }
 
+        public Func<double[], double> Handle;
+
         public Dendrite(double weight)
         {
             this.weight = weight;
+            this.Handle = values =>
+            {
+                return values.Sum() * weight;
+            };
         }
-
-        public Func<double[], double> Handle;
     }
 }
