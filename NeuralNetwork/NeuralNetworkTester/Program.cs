@@ -11,46 +11,24 @@ namespace NeuralNetworkTester
     {
         static void Main(string[] args)
         {
-            Axon a1 = new Axon(21);
-            Axon a2 = new Axon(9);
-            Axon a3 = new Axon(1);
+            Random r = new Random(DateTime.Now.Millisecond);
 
-            Dendrite d1 = new Dendrite(1);
-            d1.Handle = values =>
-            {
-                return values.Average() * d1.Weight;
-            };
-            Dendrite d2 = new Dendrite(2);
-            d2.Handle = values =>
-            {
-                return values.Average() * d2.Weight;
-            };
-            Dendrite d3 = new Dendrite(3);
-            d3.Handle = values =>
-            {
-                return values.Average() * d3.Weight;
-            };
+            Layer input = new Layer("Input Layer", 0.1, 2);
+            Layer hidden1 = new Layer("Hidden Layer 1", 0.1, 2);
+            Layer output = new Layer("Output Layer", 0.1, 1);
 
-            // this is basically what layers need to do
-            // collect all emits, and send it to dendrite
-            InputLayer input = new InputLayer();
-            input.Axons.Add(a1);
-            input.Axons.Add(a2);
-            input.Axons.Add(a3);
-
-            OutputLayer output = new ConsoleOutputLayer();
-            output.Dendrites.Add(d1);
-            output.Dendrites.Add(d2);
-            output.Dendrites.Add(d3);
-
-            double[] emitted = input.Emit();
-            Console.Write("Axons emitted : {\n\t");
-            foreach(double x in emitted)
+            foreach(Neuron n in input.Neurons)
             {
-                Console.Write(" {0} ", x);
+                n.OutputPulse.Value = r.Next(0, 100);
             }
-            Console.WriteLine("\n}");
-            output.Receive(emitted);
+
+            Network network = new Network();
+            network.AddLayer(input);
+            network.AddLayer(hidden1);
+            network.AddLayer(output);
+
+            network.Build();
+            Console.WriteLine(network.Print());
 
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
