@@ -1,25 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace NeuralNetworkLibrary
 {
-    public class Layer
+    public abstract class Layer
     {
-        public string Name { get; set; }
+        protected string name;
+        
+        protected int neuronCount;
 
-        public double Weight { get; set; }
+        protected double[] values;
 
-        public List<Neuron> Neurons { get; set; }
+        public string Name => name;
+        
+        public int NeuronCount => neuronCount;
 
-        public Layer(string name, double weight, int neurons)
+        public double[] Values => values;
+
+        protected Layer(string name, int neuronCount)
         {
-            Neurons = new List<Neuron>();
-            for (int i = 0; i < neurons; i++)
-            {
-                Neurons.Add(new Neuron());
-            }
-            Weight = weight;
-            Name = name;
+            this.name = name;
+            this.neuronCount = neuronCount;
+            values = new double[this.neuronCount];
+        }
+        
+        public string Print()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
 }
