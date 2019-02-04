@@ -14,10 +14,10 @@ namespace NeuralNetworkLibrary
     {
         public static string PrintMatrix(double[,] matrix)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < matrix.GetLength(0); i++)
+            var stringBuilder = new StringBuilder();
+            for (var i = 0; i < matrix.GetLength(0); i++)
             {
-                for (int j = 0; j < matrix.GetLength(1); j++)
+                for (var j = 0; j < matrix.GetLength(1); j++)
                 {
                     stringBuilder.Append($"{Math.Round(matrix[i, j], 2)} ");
                 }
@@ -29,8 +29,8 @@ namespace NeuralNetworkLibrary
 
         public static string PrintVector(double[] vector)
         {
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < vector.Length; i++)
+            var stringBuilder = new StringBuilder();
+            for (var i = 0; i < vector.Length; i++)
             {
                 stringBuilder.AppendLine($"{Math.Round(vector[i], 2)} ");
             }
@@ -43,10 +43,10 @@ namespace NeuralNetworkLibrary
             {
                 return null;
             }
-            double[] results = new double[matrix.GetLength(0)];
-            for (int i = 0; i < results.Length; i++)
+            var results = new double[matrix.GetLength(0)];
+            for (var i = 0; i < results.Length; i++)
             {
-                for (int j = 0; j < vector.Length; j++)
+                for (var j = 0; j < vector.Length; j++)
                 {
                     results[i] += vector[j] * matrix[i, j];
                 }
@@ -60,8 +60,8 @@ namespace NeuralNetworkLibrary
             {
                 return null;
             }
-            double[] results = new double[vector1.Length];
-            for (int i = 0; i < vector1.Length; i++)
+            var results = new double[vector1.Length];
+            for (var i = 0; i < vector1.Length; i++)
             {
                 results[i] = vector1[i] + vector2[i];
             }
@@ -70,12 +70,25 @@ namespace NeuralNetworkLibrary
 
         public static double[] Tanh(double[] vector)
         {
-            double[] results = new double[vector.Length];
-            for (int i = 0; i < vector.Length; i++)
+            var results = new double[vector.Length];
+            for (var i = 0; i < vector.Length; i++)
             {
                 results[i] = Math.Tanh(vector[i]);
             }
             return results;
+        }
+
+        public static double Cost(double[] results, double[] desired)
+        {
+            if (results.Length != desired.Length) return -1;
+
+            double sum = 0;
+            for (var i = 0; i < results.Length; i++)
+            {
+                sum += Math.Pow(results[i] - desired[i], 2);
+            }
+
+            return sum;
         }
     }
 }

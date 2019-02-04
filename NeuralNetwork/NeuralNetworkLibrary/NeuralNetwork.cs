@@ -138,5 +138,14 @@ namespace NeuralNetworkLibrary
             textWriter.Write(JsonConvert.SerializeObject(layers, Formatting.Indented));
             textWriter.Close();
         }
+
+        public void Shock()
+        {
+            inputLayer.Shock();
+        }
+
+        public double[] Results => outputLayer.Results;
+
+        public double[] Inputs => inputLayer.Values;
     }
 }

@@ -39,6 +39,7 @@ namespace NeuralNetworkLibrary
         {
             OnResult += (sender, doubles) =>
             {
+                values = doubles;
                 Shock();
             };
         }

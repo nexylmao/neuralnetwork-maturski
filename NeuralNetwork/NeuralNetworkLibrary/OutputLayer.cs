@@ -15,9 +15,9 @@ namespace NeuralNetworkLibrary
             OnResult += (sender, doubles) =>
             {
                 results = doubles;
-                TextWriter tw = new StreamWriter("Result - " + DateTime.Now.ToBinary() + ".txt");
-                tw.WriteLine(JsonConvert.SerializeObject(doubles));
-                tw.Close();
+//                TextWriter tw = new StreamWriter("Result - " + DateTime.Now.ToBinary() + ".txt");
+//                tw.WriteLine(JsonConvert.SerializeObject(doubles));
+//                tw.Close();
             };
         }
     }
