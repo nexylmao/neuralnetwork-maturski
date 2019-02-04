@@ -39,6 +39,15 @@ namespace NeuralNetworkLibrary
                 }
             }
         }
+
+        public void SetShockingLayer(ShockingLayer shockingLayer)
+        {
+            this.shockingLayer = shockingLayer;
+            if (this.shockingLayer.GetShockingLayer() != this)
+            {
+                this.shockingLayer.SetShockingLayer(this);
+            }
+        }
         
         public void Shock(double[] values)
         {

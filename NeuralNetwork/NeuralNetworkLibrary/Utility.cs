@@ -86,10 +86,13 @@ namespace NeuralNetworkLibrary
                 var weightsRoot = weights.Cells["A1"];
                 weightsRoot.Value = "WEIGHTS";
                 weightsRoot.Style.Locked = true;
-                for (var i = 0; i < layer.Weights.GetLength(0); i++)
+                for (var i = 0; i < layer.Weights.GetLength(1); i++)
                 {
                     weights.Cells[1, i + 2].Value = "INPUT " + (i + 1);
                     weights.Cells[1, i + 2].Style.Locked = true;
+                }
+                for (var i = 0; i < layer.Weights.GetLength(0); i++)
+                {
                     weights.Cells[i + 2, 1].Value = "NEURON " + (i + 1);
                     weights.Cells[i + 2, 1].Style.Locked = true;
                 }
@@ -114,47 +117,5 @@ namespace NeuralNetworkLibrary
                 package.SaveAs(new FileStream(layer.Name + ".xlsx", FileMode.OpenOrCreate));
             }
         }
-
-        class LayerConfig
-        {
-            private int neuronCount;
-            private string type;
-
-            public int NeuronCount => neuronCount;
-
-            public string Type => type;
-
-            public LayerConfig(int neuronCount, string type)
-            {
-                this.neuronCount = neuronCount;
-                this.type = type;
-            }
-        }
-
-        private static LayerConfig ToConfig(Layer layer)
-        {
-            return new LayerConfig(layer.NeuronCount, layer.GetType().Name);
-        }
-
-        private static void InternalSave(ShockableLayer layer, Dictionary<string, LayerConfig> configs)
-        {
-            if (layer == null) return;
-            configs.Add(layer.Name, ToConfig(layer));
-            if (layer.GetType().GetInterfaces().Contains(typeof(ShockingLayer)))
-            {
-                InternalSave(((ShockingLayer)layer).GetShockingLayer(), configs);
-            }
-        }
-        
-        public static void SaveNetwork(InputLayer layer)
-        {
-            if (layer == null) return;
-            var layers = new Dictionary<string, LayerConfig> {{layer.Name, ToConfig(layer)}};
-            InternalSave(layer.GetShockingLayer(), layers);
-
-            Console.WriteLine(JsonConvert.SerializeObject(layers));
-        }
-        
-        
     }
 }

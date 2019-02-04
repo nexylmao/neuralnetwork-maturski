@@ -15,11 +15,12 @@ namespace NeuralNetworkTester
             var hiddenLayer = new HiddenLayer("Hidden layer 1", 5, inputLayer);
             var outputLayer = new ConsoleOutputLayer("Output layer", 3, hiddenLayer);
 
+            var neuralNetwork = new NeuralNetwork("Basic example network", inputLayer);
+            neuralNetwork.SaveNetwork();
+            
             Console.WriteLine(JsonConvert.SerializeObject(inputLayer));
             Console.WriteLine(JsonConvert.SerializeObject(hiddenLayer));
             Console.WriteLine(JsonConvert.SerializeObject(outputLayer));
-
-            Utility.SaveNetwork(inputLayer);
             
 //            inputLayer.Shock();
         }
