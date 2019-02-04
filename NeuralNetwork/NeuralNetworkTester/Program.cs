@@ -1,6 +1,9 @@
 ﻿using System;
-using System.Data;
+using System.IO;
+using OfficeOpenXml;
 using NeuralNetworkLibrary;
+using Newtonsoft.Json;
+using OfficeOpenXml.FormulaParsing;
 
 namespace NeuralNetworkTester
 {
@@ -8,15 +11,17 @@ namespace NeuralNetworkTester
     {
         static void Main(string[] args)
         {
-            var inputLayer = new InputLayer("Input layer", 5, null);
-            inputLayer.SetValue(0, 2);
-            inputLayer.SetValue(3, 4);
-            inputLayer.SetValue(2, 5);
-
+            var inputLayer = new InputLayer("Input layer", 5);
             var hiddenLayer = new HiddenLayer("Hidden layer 1", 5, inputLayer);
             var outputLayer = new ConsoleOutputLayer("Output layer", 3, hiddenLayer);
 
-            inputLayer.Shock();
+            Console.WriteLine(JsonConvert.SerializeObject(inputLayer));
+            Console.WriteLine(JsonConvert.SerializeObject(hiddenLayer));
+            Console.WriteLine(JsonConvert.SerializeObject(outputLayer));
+
+            Utility.SaveNetwork(inputLayer);
+            
+//            inputLayer.Shock();
         }
     }
 }

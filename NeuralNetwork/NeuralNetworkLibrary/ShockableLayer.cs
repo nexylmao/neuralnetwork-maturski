@@ -30,6 +30,14 @@ namespace NeuralNetworkLibrary
 
             biases = new double[neuronCount];
             weights = new double[neuronCount, this.shockingLayer.GetNeuronCount()];
+            var r = new Random(DateTime.Now.Millisecond);
+            for (var i = 0; i < weights.GetLength(0); i++)
+            {
+                for (var j = 0; j < weights.GetLength(1); j++)
+                {
+                    weights[i, j] = (r.NextDouble() * 2) - 1;
+                }
+            }
         }
         
         public void Shock(double[] values)
