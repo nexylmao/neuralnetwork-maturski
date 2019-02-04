@@ -8,6 +8,47 @@ namespace NeuralNetworkLibrary
 {
     public class NeuralNetwork
     {
+        public static void LoadWeightsAndBiases(ShockableLayer shockableLayer)
+        {
+            shockableLayer.LoadValues();
+        }
+        
+        public static NeuralNetwork LoadNetwork(string networkName)
+        {
+            TextReader textReader = new StreamReader(networkName + ".json");
+            var configs = JsonConvert.DeserializeObject<Dictionary<string, LayerConfig>>(textReader.ReadToEnd());
+            textReader.Close();
+
+            NeuralNetwork neuralNetwork = new NeuralNetwork(networkName);
+            
+            ShockingLayer last = null;
+            foreach (var kvp in configs)
+            {
+                switch (kvp.Value.Type)
+                {
+                        case "InputLayer":
+                            last = new InputLayer(kvp.Key, kvp.Value.NeuronCount);
+                            neuralNetwork.inputLayer = (InputLayer)last;
+                            break;
+                        case "HiddenLayer":
+                            last = new HiddenLayer(kvp.Key, kvp.Value.NeuronCount, last);
+                            LoadWeightsAndBiases((ShockableLayer)last);
+                            neuralNetwork.hiddenLayers.Add((HiddenLayer)last);
+                            break;
+                        case "OutputLayer":
+                            neuralNetwork.outputLayer = new OutputLayer(kvp.Key, kvp.Value.NeuronCount, last);
+                            LoadWeightsAndBiases(neuralNetwork.outputLayer);
+                            break;
+                        case "ConsoleOutputLayer":
+                            neuralNetwork.outputLayer = new ConsoleOutputLayer(kvp.Key, kvp.Value.NeuronCount, last);
+                            LoadWeightsAndBiases(neuralNetwork.outputLayer);
+                            break;
+                }
+            }
+            
+            return neuralNetwork;
+        }
+        
         private string name;
         
         private InputLayer inputLayer;
@@ -81,7 +122,7 @@ namespace NeuralNetworkLibrary
         {
             if (layer == null) return;
             configs.Add(layer.Name, ToConfig(layer));
-            Utility.SaveValues(layer);
+            layer.SaveValues();
             if (((IList) layer.GetType().GetInterfaces()).Contains(typeof(ShockingLayer)))
             {
                 InternalSave(((ShockingLayer)layer).GetShockingLayer(), configs);
