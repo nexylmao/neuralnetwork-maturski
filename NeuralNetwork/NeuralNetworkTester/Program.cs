@@ -52,6 +52,17 @@ namespace NeuralNetworkTester
             neuralNetwork.SaveNetwork();
         }
 
+        static void CreateGiantNetwork()
+        {
+            var inputLayer = new InputLayer("IMG", 250000);
+            var hiddenOne = new HiddenLayer("H1", 250, inputLayer);
+            var hiddenTwo = new HiddenLayer("H2", 25, hiddenOne);
+            var outputLayer = new OutputLayer("OUTPUTIMG", 10, hiddenTwo);
+            
+            var neuralNetwork = new NeuralNetwork("GIANT IMAGE NETWORK", inputLayer);
+            neuralNetwork.SaveNetwork();
+        }
+        
         static void CreateRGBNetwork()
         {
             var input = new InputLayer("RGB Input", 3);
@@ -66,23 +77,6 @@ namespace NeuralNetworkTester
         {
             NeuralNetwork RGB = NeuralNetwork.LoadNetwork("RGB Neural Network");
             return RGB;
-        }
-
-        class TrainingSet
-        {
-            private double[] inputs;
-
-            private double[] results;
-
-            public double[] Inputs => inputs;
-
-            public double[] Results => results;
-
-            public TrainingSet(double[] inputs, double[] results)
-            {
-                this.inputs = inputs;
-                this.results = results;
-            }
         }
         
         static void CreateEntireRGBMap()
@@ -101,43 +95,20 @@ namespace NeuralNetworkTester
                     }
                 }
             }
-
+            
+            Random rng = new Random();
+            
+            int n = sets.Count;  
+            while (n > 1) {  
+                n--;  
+                int k = rng.Next(n + 1);  
+                TrainingSet value = sets[k];  
+                sets[k] = sets[n];  
+                sets[n] = value;  
+            }
+            
             TextWriter tw = new StreamWriter("RGBMap.json");
             tw.Write(JsonConvert.SerializeObject(sets));
-            tw.Close();
-        }
-
-        static void LoadAndTest(NeuralNetwork RGB)
-        {
-            TextReader tr = new StreamReader("RGBMap.json");
-            List<TrainingSet> sets = JsonConvert.DeserializeObject<List<TrainingSet>>(tr.ReadToEnd());
-            tr.Close();
-
-            TextWriter tw = new StreamWriter("Results.txt");
-            
-            double costSum = 0;
-            
-            foreach (var set in sets)
-            {
-                for (var i = 0; i < set.Inputs.Length; i++)
-                {
-                    RGB.Inputs[i] = set.Inputs[i];
-                }
-                
-                RGB.Shock();
-
-                double cost = Utility.Cost(RGB.Results, set.Results);
-                costSum += cost;
-                
-                string result = string.Format("I:[{0},{1},{2}]|W:[{3},{4}]|R:[{5},{6}]|C:{7}", set.Inputs[0],
-                    set.Inputs[1], set.Inputs[2], set.Results[0], set.Results[1], RGB.Results[0], RGB.Results[1], cost);
-
-                Console.WriteLine(result);
-                tw.WriteLine(result);
-            }
-
-            Console.WriteLine("Cost sum = {0}", costSum);
-            tw.WriteLine("Cost sum = {0}", costSum);
             tw.Close();
         }
         
@@ -149,7 +120,9 @@ namespace NeuralNetworkTester
         static void Main(string[] args)
         {
             NeuralNetwork RGB = WorkWithRGBNetwork();
-            LoadAndTest(RGB);
+//            CreateEntireRGBMap();
+//            RGB.TestNeuralNetwork("RGBMap");
+            RGB.GradientDescentForTest("RGBMap");
         }
     }
 }

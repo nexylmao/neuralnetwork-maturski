@@ -6,6 +6,23 @@ using Newtonsoft.Json;
 
 namespace NeuralNetworkLibrary
 {
+    public class TrainingSet
+    {
+        private double[] inputs;
+
+        private double[] results;
+
+        public double[] Inputs => inputs;
+
+        public double[] Results => results;
+
+        public TrainingSet(double[] inputs, double[] results)
+        {
+            this.inputs = inputs;
+            this.results = results;
+        }
+    }
+    
     public class NeuralNetwork
     {
         public static void LoadWeightsAndBiases(ShockableLayer shockableLayer)
@@ -121,8 +138,10 @@ namespace NeuralNetworkLibrary
         private void InternalSave(ShockableLayer layer, Dictionary<string, LayerConfig> configs)
         {
             if (layer == null) return;
+            Console.WriteLine("Saving " + layer.Name);
             configs.Add(layer.Name, ToConfig(layer));
             layer.SaveValues();
+            Console.WriteLine("Saved Values");
             if (((IList) layer.GetType().GetInterfaces()).Contains(typeof(ShockingLayer)))
             {
                 InternalSave(((ShockingLayer)layer).GetShockingLayer(), configs);
@@ -147,5 +166,71 @@ namespace NeuralNetworkLibrary
         public double[] Results => outputLayer.Results;
 
         public double[] Inputs => inputLayer.Values;
+
+        public void GradientDescentForTest(string json)
+        {
+            TextReader tr = new StreamReader(json + ".json");
+            List<TrainingSet> sets = JsonConvert.DeserializeObject<List<TrainingSet>>(tr.ReadToEnd());
+            tr.Close();
+
+            TextWriter tw = new StreamWriter($"GD {Name} {DateTime.Now.ToBinary()}.txt");
+            
+            foreach (var set in sets)
+            {
+                for (var i = 0; i < set.Inputs.Length; i++)
+                {
+                    Inputs[i] = set.Inputs[i];
+                }
+                
+                Shock();
+
+                double[] deltas = new double[set.Results.Length];
+                
+                for (var i = 0; i < Results.Length; i++)
+                {
+                    deltas[i] = set.Results[i] - Results[i];
+                }
+                
+                double cost = Utility.Cost(Results, set.Results);
+                string result = string.Format("I:{0}|W:{1}|R:{2}|C:{3}|D:{4}", JsonConvert.SerializeObject(set.Inputs), JsonConvert.SerializeObject(set.Results), JsonConvert.SerializeObject(Results), cost, JsonConvert.SerializeObject(deltas));
+                Console.WriteLine(result);
+                tw.WriteLine(result);
+            }
+            
+            tw.Close();
+        }
+        
+        public void TestNeuralNetwork(string json)
+        {
+            TextReader tr = new StreamReader(json + ".json");
+            List<TrainingSet> sets = JsonConvert.DeserializeObject<List<TrainingSet>>(tr.ReadToEnd());
+            tr.Close();
+
+            TextWriter tw = new StreamWriter($"Results {Name} {DateTime.Now.ToBinary()}.txt");
+            
+            double costSum = 0;
+            
+            foreach (var set in sets)
+            {
+                for (var i = 0; i < set.Inputs.Length; i++)
+                {
+                    Inputs[i] = set.Inputs[i];
+                }
+                
+                Shock();
+
+                double cost = Utility.Cost(Results, set.Results);
+                costSum += cost;
+                
+                string result = string.Format("I:{0}|W:{1}|R:{2}|C:{3}", JsonConvert.SerializeObject(set.Inputs), JsonConvert.SerializeObject(set.Results), JsonConvert.SerializeObject(Results), cost);
+
+                Console.WriteLine(result);
+                tw.WriteLine(result);
+            }
+
+            Console.WriteLine("Cost sum = {0}", costSum);
+            tw.WriteLine("Cost sum = {0}", costSum);
+            tw.Close();
+        }
     }
 }
