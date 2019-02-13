@@ -3,9 +3,37 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using OfficeOpenXml;
+using OfficeOpenXml.Drawing;
 
 namespace NeuralNetworkLibrary
 {
+    public class BackpropData
+    {
+        private string name;
+        
+        private double[] received;
+
+        private double[] preactivated;
+
+        private double[] calculated;
+
+        public string Name => name;
+        
+        public double[] Received => received;
+
+        public double[] Preactivated => preactivated;
+
+        public double[] Calculated => calculated;
+
+        public BackpropData(string name, double[] received, double[] preactivated, double[] calculated)
+        {
+            this.name = name;
+            this.received = received;
+            this.preactivated = preactivated;
+            this.calculated = calculated;
+        }
+    }
+    
     public abstract class ShockableLayer : Layer
     {
         protected double[,] weights;
@@ -20,7 +48,9 @@ namespace NeuralNetworkLibrary
 
         public ShockingLayer ShockingLayer => shockingLayer;
 
-        public event EventHandler<double[]> OnResult; 
+        public event EventHandler<double[]> OnResult;
+
+        public event EventHandler<BackpropData> OnBackpropData;
         
         public ShockableLayer(string name, int neuronCount, ShockingLayer shockingLayer) : base(name, neuronCount)
         {
@@ -50,14 +80,15 @@ namespace NeuralNetworkLibrary
                 this.shockingLayer.SetShockingLayer(this);
             }
         }
-        
+
         public void Shock(double[] values)
         {
             var multiplication = Utility.Multiply(weights, values);
             var addition = Utility.AddUp(multiplication, biases);
             var result = Utility.Tanh(addition);
-            
-            OnResult.Invoke(this, result);
+
+            OnResult?.Invoke(this, result);
+            OnBackpropData?.Invoke(this, new BackpropData(name, values, addition, result));
         }
         
         public void SaveValues()

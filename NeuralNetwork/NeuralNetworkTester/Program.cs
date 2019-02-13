@@ -82,11 +82,12 @@ namespace NeuralNetworkTester
         static void CreateEntireRGBMap()
         {
             List<TrainingSet> sets = new List<TrainingSet>();
-            for (uint i = 0; i <= 255; i+=5)
+            double step = 0.05;
+            for (double i = 0; i <= 1; i+=step)
             {
-                for (uint j = 0; j <= 255; j+=5)
+                for (double j = 0; j <= 1; j+=step)
                 {
-                    for (uint k = 0; k <= 255; k+=5)
+                    for (double k = 0; k <= 1; k+=step)
                     {
                         double[] inputs = new double[] {i, j, k};
                         double[] result = ContrastColor(i, j, k);
@@ -98,11 +99,11 @@ namespace NeuralNetworkTester
             
             Random rng = new Random();
             
-            int n = sets.Count;  
+            var n = sets.Count;  
             while (n > 1) {  
                 n--;  
-                int k = rng.Next(n + 1);  
-                TrainingSet value = sets[k];  
+                var k = rng.Next(n + 1);  
+                var value = sets[k];  
                 sets[k] = sets[n];  
                 sets[n] = value;  
             }
@@ -112,8 +113,11 @@ namespace NeuralNetworkTester
             tw.Close();
         }
         
-        static double[] ContrastColor(uint R, uint G, uint B)
+        static double[] ContrastColor(double R, double G, double B)
         {
+            R = (int) Math.Round(R * 255, 0);
+            G = (int) Math.Round(G * 255, 0);
+            B = (int) Math.Round(B * 255, 0);
             return (0.299 * R + 0.587 * G + 0.114 * B) / 255 > 0.5 ? new double[] {1, 0} : new double[] {0, 1};
         }
         
@@ -121,8 +125,8 @@ namespace NeuralNetworkTester
         {
             NeuralNetwork RGB = WorkWithRGBNetwork();
 //            CreateEntireRGBMap();
-//            RGB.TestNeuralNetwork("RGBMap");
-            RGB.GradientDescentForTest("RGBMap");
+//            RGB.TestNeuralNetwork("RGBTest");
+            RGB.Train("RGBMap");
         }
     }
 }
