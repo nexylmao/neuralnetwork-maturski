@@ -123,10 +123,11 @@ namespace NeuralNetworkTester
         
         static void Main(string[] args)
         {
+//            CreateRGBNetwork();
             NeuralNetwork RGB = WorkWithRGBNetwork();
 //            CreateEntireRGBMap();
-//            RGB.TestNeuralNetwork("RGBTest");
-            RGB.Train("RGBMap");
+//            RGB.Train("RGBTrain");
+            RGB.TestNeuralNetwork("RGBTest");
         }
     }
 }
