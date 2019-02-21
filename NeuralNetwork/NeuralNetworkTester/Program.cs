@@ -115,9 +115,9 @@ namespace NeuralNetworkTester
         
         static double[] ContrastColor(double R, double G, double B)
         {
-            R = (int) Math.Round(R * 255, 0);
-            G = (int) Math.Round(G * 255, 0);
-            B = (int) Math.Round(B * 255, 0);
+            R = Math.Round(R * 255, 0);
+            G = Math.Round(G * 255, 0);
+            B = Math.Round(B * 255, 0);
             return (0.299 * R + 0.587 * G + 0.114 * B) / 255 > 0.5 ? new double[] {1, 0} : new double[] {0, 1};
         }
         
@@ -126,7 +126,7 @@ namespace NeuralNetworkTester
 //            CreateRGBNetwork();
             NeuralNetwork RGB = WorkWithRGBNetwork();
 //            CreateEntireRGBMap();
-//            RGB.Train("RGBTrain");
+//            RGB.Train("RGBMap");
             RGB.TestNeuralNetwork("RGBTest");
         }
     }

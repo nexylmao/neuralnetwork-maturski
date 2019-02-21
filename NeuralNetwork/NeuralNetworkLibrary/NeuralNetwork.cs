@@ -486,7 +486,7 @@ namespace NeuralNetworkLibrary
                     Console.WriteLine("Summed adjustments");
                     Console.WriteLine(Utility.PrintMatrix(hiddenAdjustments.WeightDeltas));
                     Console.WriteLine(Utility.PrintVector(hiddenAdjustments.BiasDeltas));
-                    hiddenAdjustments.LearningRate = 1;
+                    hiddenAdjustments.LearningRate = 0.1;
                     Console.WriteLine("Summed adjustments * learning rate");
                     Console.WriteLine(Utility.PrintMatrix(hiddenAdjustments.WeightDeltas));
                     Console.WriteLine(Utility.PrintVector(hiddenAdjustments.BiasDeltas));
@@ -504,7 +504,7 @@ namespace NeuralNetworkLibrary
                 Console.WriteLine("Summed adjustments");
                 Console.WriteLine(Utility.PrintMatrix(outputAdjustments.WeightDeltas));
                 Console.WriteLine(Utility.PrintVector(outputAdjustments.BiasDeltas));
-                outputAdjustments.LearningRate = 1;
+                outputAdjustments.LearningRate = 0.1;
                 Console.WriteLine("Summed adjustments * learning rate");
                 Console.WriteLine(Utility.PrintMatrix(outputAdjustments.WeightDeltas));
                 Console.WriteLine(Utility.PrintVector(outputAdjustments.BiasDeltas));
@@ -528,6 +528,8 @@ namespace NeuralNetworkLibrary
             List<TrainingSet> sets = JsonConvert.DeserializeObject<List<TrainingSet>>(tr.ReadToEnd());
             tr.Close();
 
+            double minCost = Double.MaxValue, maxCost = Double.MinValue, averageCost = 0;
+            
             TextWriter tw = new StreamWriter($"Results {Name} {DateTime.Now.ToBinary()}.txt");
             
             double costSum = 0;
@@ -543,6 +545,15 @@ namespace NeuralNetworkLibrary
 
                 double cost = Utility.Cost(Results, set.Results);
                 costSum += cost;
+
+                if (cost < minCost)
+                {
+                    minCost = cost;
+                }
+                else if (cost > maxCost)
+                {
+                    maxCost = cost;
+                }
                 
                 string result = string.Format("I:{0}|W:{1}|R:{2}|C:{3}", JsonConvert.SerializeObject(set.Inputs), JsonConvert.SerializeObject(set.Results), JsonConvert.SerializeObject(Results), cost);
 
@@ -550,8 +561,12 @@ namespace NeuralNetworkLibrary
                 tw.WriteLine(result);
             }
 
+            averageCost = costSum / sets.Count;
+            
             Console.WriteLine("Cost sum = {0}", costSum);
+            Console.WriteLine("Max cost = {0}, min cost = {1}, average cost = {2}", maxCost, minCost, averageCost);
             tw.WriteLine("Cost sum = {0}", costSum);
+            tw.WriteLine("Max cost = {0}, min cost = {1}, average cost = {2}", maxCost, minCost, averageCost);
             tw.Close();
         }
     }
