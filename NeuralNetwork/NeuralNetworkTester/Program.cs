@@ -124,10 +124,22 @@ namespace NeuralNetworkTester
         static void Main(string[] args)
         {
 //            CreateRGBNetwork();
-            NeuralNetwork RGB = WorkWithRGBNetwork();
+//            NeuralNetwork RGB = WorkWithRGBNetwork();
 //            CreateEntireRGBMap();
 //            RGB.Train("RGBMap");
-            RGB.TestNeuralNetwork("RGBTest");
+//            RGB.TestNeuralNetwork("RGBTest");
+            
+            InputLayer input = new InputLayer("Input", 3);
+            ElmanHiddenLayer elmanHidden = new ElmanHiddenLayer("Hidden", 4, 2, input);
+            ConsoleOutputLayer output = new ConsoleOutputLayer("Output", 3, elmanHidden);
+            
+            Random r = new Random(DateTime.Now.Millisecond);
+            for (var i = 0; i < input.Values.Length; i++)
+            {
+                input.Values[i] = r.NextDouble();
+            }
+
+            input.Shock();
         }
     }
 }

@@ -60,10 +60,19 @@ namespace NeuralNetworkLibrary
                             LoadWeightsAndBiases((ShockableLayer)last);
                             neuralNetwork.hiddenLayers.Add((HiddenLayer)last);
                             break;
+//                        case "ElmanHiddenLayer":
+//                            ElmanLayerConfig elc = (ElmanLayerConfig)kvp.Value;
+//                            last = new ElmanHiddenLayer(kvp.Key, kvp.Value.NeuronCount, elc.ContextLayerCount, last);
+//                            neuralNetwork.hiddenLayers.Add((HiddenLayer)last);
+//                            break;
                         case "OutputLayer":
                             neuralNetwork.outputLayer = new OutputLayer(kvp.Key, kvp.Value.NeuronCount, last);
                             LoadWeightsAndBiases(neuralNetwork.outputLayer);
                             break;
+//                        case "JordanOutputLayer":
+//                            JordanLayerConfig jlc = (JordanLayerConfig)kvp.Value;
+//                            last = new JordanOutputLayer(kvp.Key, kvp.Value.NeuronCount, jlc.ContextLayerCount, last);
+//                            break;
                         case "ConsoleOutputLayer":
                             neuralNetwork.outputLayer = new ConsoleOutputLayer(kvp.Key, kvp.Value.NeuronCount, last);
                             LoadWeightsAndBiases(neuralNetwork.outputLayer);
