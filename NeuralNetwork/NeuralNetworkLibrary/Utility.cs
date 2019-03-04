@@ -93,7 +93,6 @@ namespace NeuralNetworkLibrary
 
         public static double DerivativeTanh(double value)
         {
-//            Console.WriteLine("TANH({0})={1}", value, Math.Tanh(value));
             return 1 - Math.Pow(Math.Tanh(value), 2);
         }
     }

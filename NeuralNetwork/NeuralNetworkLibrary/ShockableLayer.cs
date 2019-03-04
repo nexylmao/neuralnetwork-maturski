@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -42,6 +43,10 @@ namespace NeuralNetworkLibrary
 
         protected ShockingLayer shockingLayer;
 
+        protected ElmanContextLayer elmanContextLayer;
+        
+        protected JordanContextLayer jordanContextLayer;
+
         public double[,] Weights => weights;
 
         public double[] Biases => biases;
@@ -54,6 +59,23 @@ namespace NeuralNetworkLibrary
         
         public ShockableLayer(string name, int neuronCount, ShockingLayer shockingLayer) : base(name, neuronCount)
         {
+            createLayer(shockingLayer);
+        }
+
+        public ShockableLayer(string name, int neuronCount, int contextLayers, ShockingLayer shockingLayer) : base(name, neuronCount)
+        {
+            createElmanContext(contextLayers);
+            createLayer(shockingLayer);
+        }
+
+        public ShockableLayer(string name, int neuronCount, JordanContextLayer contextLayer, ShockingLayer shockingLayer) : base(name, neuronCount)
+        {
+            this.jordanContextLayer = contextLayer;
+            createLayer(shockingLayer);
+        }
+      
+        private void createLayer(ShockingLayer shockingLayer)
+        {
             this.shockingLayer = shockingLayer;
             if (this.shockingLayer.GetShockingLayer() != this)
             {
@@ -61,7 +83,18 @@ namespace NeuralNetworkLibrary
             }
 
             biases = new double[neuronCount];
-            weights = new double[neuronCount, this.shockingLayer.GetNeuronCount()];
+            if (elmanContextLayer != null)
+            {
+                weights = new double[neuronCount, this.shockingLayer.GetNeuronCount() + neuronCount];
+            }
+            else if (jordanContextLayer != null)
+            {
+                weights = new double[neuronCount, this.shockingLayer.GetNeuronCount() + jordanContextLayer.Neurons];
+            }
+            else
+            {
+                weights = new double[neuronCount, this.shockingLayer.GetNeuronCount()];   
+            }
             var r = new Random(DateTime.Now.Millisecond);
             for (var i = 0; i < weights.GetLength(0); i++)
             {
@@ -72,6 +105,11 @@ namespace NeuralNetworkLibrary
             }
         }
 
+        private void createElmanContext(int contextLayers)
+        {
+            elmanContextLayer = new ElmanContextLayer(neuronCount, contextLayers);
+        }
+        
         public void SetShockingLayer(ShockingLayer shockingLayer)
         {
             this.shockingLayer = shockingLayer;
@@ -83,10 +121,33 @@ namespace NeuralNetworkLibrary
 
         public void Shock(double[] values)
         {
-            var multiplication = Utility.Multiply(weights, values);
-            var addition = Utility.AddUp(multiplication, biases);
-            var result = Utility.Tanh(addition);
+            double[] multiplication = null;
+            double[] addition = null;
+            double[] result = null;
+            
+            if (elmanContextLayer != null)
+            {
+                var contextValues = elmanContextLayer.Dequeue();
+                var newValues = new List<double>();
+                newValues.AddRange(values);
+                newValues.AddRange(contextValues);
+                values = newValues.ToArray();
+            }
+            else if (jordanContextLayer != null)
+            {
+                var contextValues = jordanContextLayer.Current;
+                var newValues = new List<double>();
+                newValues.AddRange(values);
+                newValues.AddRange(contextValues);
+                values = newValues.ToArray();
+            }
+            
+            multiplication = Utility.Multiply(weights, values);
+            addition = Utility.AddUp(multiplication, biases);
+            result = Utility.Tanh(addition);
 
+            elmanContextLayer?.Enqueue(result);
+            
             OnResult?.Invoke(this, result);
             OnBackpropData?.Invoke(this, new BackpropData(name, values, addition, result));
         }

@@ -138,8 +138,40 @@ namespace NeuralNetworkLibrary
             }
         }
 
+        private class ElmanLayerConfig : LayerConfig
+        {
+            private int contextLayerCount;
+
+            public int ContextLayerCount => contextLayerCount;
+
+            public ElmanLayerConfig(int neuronCount, string type, int contextLayerCount) : base(neuronCount, type)
+            {
+                this.contextLayerCount = contextLayerCount;
+            }
+        }
+
+        private class JordanLayerConfig : LayerConfig
+        {
+            private int contextLayerCount;
+
+            public int ContextLayerCount => contextLayerCount;
+
+            public JordanLayerConfig(int neuronCount, string type, int contextLayerCount) : base(neuronCount, type)
+            {
+                this.contextLayerCount = contextLayerCount;
+            }
+        }
+        
         private LayerConfig ToConfig(Layer layer)
         {
+            if (layer.GetType() == typeof(ElmanHiddenLayer))
+            {
+                return new ElmanLayerConfig(layer.NeuronCount, layer.GetType().Name, ((ElmanHiddenLayer)layer).Layers);
+            }
+            else if (layer.GetType() == typeof(JordanOutputLayer))
+            {
+                return new JordanLayerConfig(layer.NeuronCount, layer.GetType().Name, ((JordanOutputLayer)layer).Layers);
+            }
             return new LayerConfig(layer.NeuronCount, layer.GetType().Name);
         }
 

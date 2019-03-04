@@ -53,8 +53,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleOutputLayer.cs" />
+    <Compile Include="ElmanContextLayer.cs" />
+    <Compile Include="ElmanHiddenLayer.cs" />
     <Compile Include="HiddenLayer.cs" />
     <Compile Include="InputLayer.cs" />
+    <Compile Include="JordanContextLayer.cs" />
+    <Compile Include="JordanHiddenLayer.cs" />
+    <Compile Include="JordanOutputLayer.cs" />
     <Compile Include="Layer.cs" />
     <Compile Include="NeuralNetwork.cs" />
     <Compile Include="OutputLayer.cs" />
