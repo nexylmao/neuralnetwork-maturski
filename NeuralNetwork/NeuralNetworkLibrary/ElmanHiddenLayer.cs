@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace NeuralNetworkLibrary
 {
-    public class ElmanHiddenLayer : ShockableLayer, ShockingLayer
+    public class ElmanHiddenLayer : HiddenLayer
     {
         private ShockableLayer target;
 
@@ -20,21 +20,6 @@ namespace NeuralNetworkLibrary
             {
                 return false;
             }
-        }
-
-        public ShockableLayer GetShockingLayer()
-        {
-            return target;
-        }
-
-        public void SetShockingLayer(ShockableLayer layer)
-        {
-            target = layer;
-        }
-
-        public int GetNeuronCount()
-        {
-            return neuronCount;
         }
 
         public ElmanHiddenLayer(string name, int neuronCount, int contextLayers, ShockingLayer shockingLayer) : base(name, neuronCount, contextLayers, shockingLayer)

@@ -131,15 +131,18 @@ namespace NeuralNetworkTester
             
             InputLayer input = new InputLayer("Input", 3);
             ElmanHiddenLayer elmanHidden = new ElmanHiddenLayer("Hidden", 4, 2, input);
-            ConsoleOutputLayer output = new ConsoleOutputLayer("Output", 3, elmanHidden);
+            ConsoleOutputLayer output = new ConsoleOutputLayer("Output", 2, elmanHidden);
             
-            Random r = new Random(DateTime.Now.Millisecond);
-            for (var i = 0; i < input.Values.Length; i++)
-            {
-                input.Values[i] = r.NextDouble();
-            }
-
-            input.Shock();
+            NeuralNetwork network = new NeuralNetwork("RNN", input);
+            network.TestNeuralNetwork("RGBTest");
+            Console.WriteLine("Press any key to train the network!");
+            Console.ReadKey();
+            network.Train("RGBMap");
+            Console.WriteLine("Press any key to train the network!");
+            Console.ReadKey();
+            network.TestNeuralNetwork("RGBTest");
+            Console.WriteLine("Done.");
+            Console.ReadKey();
         }
     }
 }

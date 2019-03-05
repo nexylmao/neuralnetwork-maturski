@@ -43,5 +43,23 @@ namespace NeuralNetworkLibrary
                 Shock();
             };
         }
+
+        public HiddenLayer(string name, int neuronCount, int contextLayers, ShockingLayer shockingLayer) : base(name, neuronCount, contextLayers, shockingLayer)
+        {
+            OnResult += (sender, doubles) =>
+            {
+                values = doubles;
+                Shock();
+            };
+        }
+
+        public HiddenLayer(string name, int neuronCount, JordanContextLayer contextLayer, ShockingLayer shockingLayer) : base(name, neuronCount, contextLayer, shockingLayer)
+        {
+            OnResult += (sender, doubles) =>
+            {
+                values = doubles;
+                Shock();
+            };
+        }
     }
 }

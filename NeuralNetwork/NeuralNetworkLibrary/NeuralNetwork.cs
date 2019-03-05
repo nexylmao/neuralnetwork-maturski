@@ -118,9 +118,9 @@ namespace NeuralNetworkLibrary
         {
             if (shockableLayer != null)
             {
-                if (shockableLayer.GetType() == typeof(HiddenLayer))
+                if (shockableLayer.GetType() == typeof(HiddenLayer) || shockableLayer.GetType().BaseType == typeof(HiddenLayer))
                 {
-                    HiddenLayer hiddenLayer = (HiddenLayer) shockableLayer;
+                    HiddenLayer hiddenLayer = (HiddenLayer)shockableLayer;
                     hiddenLayers.Add(hiddenLayer);
                     RecurseLayerAddition(hiddenLayer.GetShockingLayer());
                 }
